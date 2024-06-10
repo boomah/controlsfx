@@ -319,7 +319,12 @@ abstract class CheckBitSetModelBase<T> implements IndexedCheckModel<T> {
                 return -1;
             }
 
-            if (index == (lastGetIndex + 1) && lastGetValue < itemCount) {
+            // Commenting this out as recent changes indicate the short-circuiting in this code isn't working properly.
+            // An issue has been raised with controlsfx here: https://github.com/controlsfx/controlsfx/issues/1550
+            // A test has been added which demonstrates the problem here:
+            // org.controlsfx.control.CheckBitSetModelBaseTest.testCheckedItemsContainsCorrectValuesAfterClearCheck
+
+            /*if (index == (lastGetIndex + 1) && lastGetValue < itemCount) {
                 // we're iterating forward in order, short circuit for
                 // performance reasons (RT-39776)
                 lastGetIndex++;
@@ -338,6 +343,14 @@ abstract class CheckBitSetModelBase<T> implements IndexedCheckModel<T> {
                     if (lastGetIndex == index) {
                         return lastGetValue;
                     }
+                }
+            }*/
+
+            for (lastGetIndex = 0, lastGetValue = bitset.nextSetBit(0);
+                 lastGetValue >= 0 || lastGetIndex == index;
+                 lastGetIndex++, lastGetValue = bitset.nextSetBit(lastGetValue + 1)) {
+                if (lastGetIndex == index) {
+                    return lastGetValue;
                 }
             }
 

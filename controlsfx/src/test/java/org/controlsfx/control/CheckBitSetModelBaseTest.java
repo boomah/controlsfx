@@ -149,4 +149,22 @@ public class CheckBitSetModelBaseTest {
         model.check(ROW_3_VALUE);
         assertNotEquals(-1, checkedIndicesList.indexOf(model.getItemIndex(ROW_3_VALUE)));
     }
+
+    @Test
+    public void testCheckedItemsContainsCorrectValuesAfterClearCheck() {
+        model.clearChecks();
+        assertTrue(model.isEmpty());
+
+        model.check(2);
+        model.check(4);
+        assertTrue(model.isChecked(2));
+        assertTrue(model.isChecked(4));
+        model.clearCheck(2);
+        assertFalse(model.isChecked(2));
+        assertTrue(model.isChecked(4));
+
+        ObservableList<String> checkedItems = model.getCheckedItems();
+        assertEquals(1, checkedItems.size());
+        assertTrue(checkedItems.contains(ROW_5_VALUE));
+    }
 }
